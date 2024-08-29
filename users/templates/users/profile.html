@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Profile</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Update Profile</button>
+</form>
+
+{% if user.is_customer %}
+    <h3>Requested Services</h3>
+    {% if requested_services %}
+        <ul>
+        {% for request in requested_services %}
+            <li>
+                <a href="{% url 'service_detail' request.service.id %}">{{ request.service.name }}</a>
+                - Requested on {{ request.date_requested|date:"F d, Y" }}
+                - Status: {{ request.get_status_display }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't requested any services yet.</p>
+    {% endif %}
+{% elif user.is_company %}
+    <h3>Your Services</h3>
+    {% if user.services.all %}
+        <ul>
+        {% for service in user.services.all %}
+            <li><a href="{% url 'service_detail' service.id %}">{{ service.name }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't created any services yet.</p>
+    {% endif %}
+    <a href="{% url 'create_service' %}" class="btn btn-primary">Create New Service</a>
+{% endif %}
+{% endblock %}
