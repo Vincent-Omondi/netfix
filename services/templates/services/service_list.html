@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Services</h1>
+
+{% if category %}
+    <h2>Category: {{ category }}</h2>
+{% endif %}
+
+<div class="service-list">
+    {% for service in services %}
+        <div class="service-item">
+            <h2><a href="{% url 'service_detail' service.pk %}">{{ service.name }}</a></h2>
+            <p>{{ service.description|truncatewords:30 }}</p>
+            <p>Field: {{ service.get_field_display }}</p>
+            <p>Price: ${{ service.price_per_hour }}/hour</p>
+            <p>Provided by: <a href="{% url 'company_profile' service.company.pk %}">{{ service.company.username }}</a></p>
+        </div>
+    {% empty %}
+        <p>No services available.</p>
+    {% endfor %}
+</div>
+
+{% if user.is_company %}
+    <a href="{% url 'create_service' %}" class="btn btn-primary">Create New Service</a>
+{% endif %}
+
+{% endblock %}

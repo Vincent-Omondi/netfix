@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ service.name }}</h1>
+
+<div class="service-details">
+    <p>{{ service.description }}</p>
+    <p><strong>Field:</strong> {{ service.get_field_display }}</p>
+    <p><strong>Price:</strong> ${{ service.price_per_hour }}/hour</p>
+    <p><strong>Provided by:</strong> <a href="{% url 'company_profile' service.company.pk %}">{{ service.company.username }}</a></p>
+    <p><strong>Created on:</strong> {{ service.date_created|date:"F d, Y" }}</p>
+</div>
+
+{% if user.is_authenticated and user.is_customer %}
+    <h2>Request this service</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit Request</button>
+    </form>
+{% endif %}
+
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% endblock %}
